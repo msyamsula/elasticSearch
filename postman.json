@@ -1,0 +1,1388 @@
+{
+	"info": {
+		"_postman_id": "f98be753-a094-407b-bbee-27d1737f3f39",
+		"name": "ElasticSearch",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "index",
+			"item": [
+				{
+					"name": "create Index",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete index",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "index stats",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_stats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_stats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "close index",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_close",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_close"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "open index",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_open",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_open"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "index settings",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"analysis\": {\n        \"analyzer\": {\n            \"default\": {\n                \"type\": \"english\"\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_settings",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_settings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create with settings",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"settings\": {\n        \"analysis\": {\n            \"analyzer\": {\n                \"default\": {\n                    \"type\": \"english\"\n                }\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "bigram index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"settings\": {\n        \"analysis\": {\n            \"analyzer\": {\n                \"default\": {\n                    \"type\": \"english\"\n                },\n                \"english_bigrams\": {\n                    \"type\": \"custom\",\n                    \"tokenizer\": \"standard\",\n                    \"filter\": [\n                        \"lowercase\",\n                        \"porter_stem\",\n                        \"bigram_filter\"\n                    ]\n                }\n            },\n            \"filter\": {\n                \"bigram_filter\": {\n                    \"type\": \"shingle\",\n                    \"max_shingle_size\": 2,\n                    \"min_shingle_size\": 2,\n                    \"output_unigrams\": \"false\"\n                }\n            }\n        }\n    },\n    \"mappings\": {\n        \"dynamic\": true,\n        \"properties\": {\n            \"cast\": {\n                \"properties\": {\n                    \"name\": {\n                        \"type\": \"text\",\n                        \"analyzer\": \"default\",\n                        \"fields\": {\n                            \"bigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_bigrams\"\n                            }\n                        }\n                    }\n                }\n            },\n            \"directors\": {\n                \"properties\": {\n                    \"name\": {\n                        \"type\": \"text\",\n                        \"analyzer\": \"default\",\n                        \"fields\": {\n                            \"bigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_bigrams\"\n                            }\n                        }\n                    }\n                }\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3-grams index",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"settings\": {\n        \"analysis\": {\n            \"analyzer\": {\n                \"default\": {\n                    \"type\": \"english\"\n                },\n                \"english_bigrams\": {\n                    \"type\": \"custom\",\n                    \"tokenizer\": \"standard\",\n                    \"filter\": [\n                        \"lowercase\",\n                        \"porter_stem\",\n                        \"bigram_filter\"\n                    ]\n                },\n                \"english_trigrams\": {\n                    \"type\": \"custom\",\n                    \"tokenizer\": \"standard\",\n                    \"filter\": [\n                        \"lowercase\",\n                        \"porter_stem\",\n                        \"trigram_filter\"\n                    ]\n                }\n            },\n            \"filter\": {\n                \"bigram_filter\": {\n                    \"type\": \"shingle\",\n                    \"max_shingle_size\": 2,\n                    \"min_shingle_size\": 2,\n                    \"output_unigrams\": \"false\"\n                },\n                \"trigram_filter\": {\n                    \"type\": \"shingle\",\n                    \"max_shingle_size\": 3,\n                    \"min_shingle_size\": 3,\n                    \"output_unigrams\": \"false\"\n                }\n            }\n        }\n    },\n    \"mappings\": {\n        \"dynamic\": true,\n        \"properties\": {\n            \"cast\": {\n                \"properties\": {\n                    \"name\": {\n                        \"type\": \"text\",\n                        \"analyzer\": \"default\",\n                        \"fields\": {\n                            \"bigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_bigrams\"\n                            },\n                            \"trigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_trigrams\"\n                            }\n                        }\n                    }\n                }\n            },\n            \"directors\": {\n                \"properties\": {\n                    \"name\": {\n                        \"type\": \"text\",\n                        \"analyzer\": \"default\",\n                        \"fields\": {\n                            \"bigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_bigrams\"\n                            }\n                        }\n                    }\n                }\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "query",
+			"item": [
+				{
+					"name": "bulk insert",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"index\": {\"_index\": \"tmdb\",\"_type\": \"movie\",\"_id\":470.000000}}\n{\"adult\":false,\"backdrop_path\":\"/lSPsevGgWT3Rqc9OMTyeEsZsOpf.jpg\",\"belongs_to_collection\":null,\"budget\":20000000,\"cast\":[{\"cast_id\":3,\"character\":\"Paul Rivers\",\"credit_id\":\"52fe4247c3a36847f8011e25\",\"id\":2228,\"name\":\"Sean Penn\",\"order\":0,\"profile_path\":\"/f2uy1zq0qmtLBpsr6N9uQ8FktOr.jpg\"},{\"cast_id\":4,\"character\":\"Cristina Peck\",\"credit_id\":\"52fe4247c3a36847f8011e29\",\"id\":3489,\"name\":\"Naomi Watts\",\"order\":1,\"profile_path\":\"/8W02WOJI1pEGh2iqQsgITR5tV0P.jpg\"},{\"cast_id\":17,\"character\":\"Jack Jordan\",\"credit_id\":\"52fe4247c3a36847f8011e75\",\"id\":1121,\"name\":\"Benicio del Toro\",\"order\":2,\"profile_path\":\"/cbkXDtNDFYHKsyQzqvzxjn7F7rX.jpg\"},{\"cast_id\":18,\"character\":\"Michael\",\"credit_id\":\"52fe4247c3a36847f8011e79\",\"id\":6413,\"name\":\"Danny Huston\",\"order\":3,\"profile_path\":\"/jc1eGtCShQ2ZkzqWApiWbA1lbTF.jpg\"},{\"cast_id\":19,\"character\":\"Cathy\",\"credit_id\":\"52fe4247c3a36847f8011e7d\",\"id\":6830,\"name\":\"Carly Nahon\",\"order\":4,\"profile_path\":null},{\"cast_id\":20,\"character\":\"Laura\",\"credit_id\":\"52fe4247c3a36847f8011e81\",\"id\":6831,\"name\":\"Claire Pakis\",\"order\":5,\"profile_path\":null},{\"cast_id\":21,\"character\":\"Reverend John\",\"credit_id\":\"52fe4247c3a36847f8011e85\",\"id\":1665,\"name\":\"Eddie Marsan\",\"order\":6,\"profile_path\":\"/zcJ2W9BuiBPohtOkPFcYuFfCzji.jpg\"},{\"cast_id\":22,\"character\":\"Marianne Jordan\",\"credit_id\":\"52fe4247c3a36847f8011e89\",\"id\":6832,\"name\":\"Melissa Leo\",\"order\":7,\"profile_path\":\"/pWP5xzOtoOcqJ0lZo2xguQ5BnrB.jpg\"},{\"cast_id\":23,\"character\":\"Mary Rivers\",\"credit_id\":\"52fe4247c3a36847f8011e8d\",\"id\":4273,\"name\":\"Charlotte Gainsbourg\",\"order\":8,\"profile_path\":\"/4TKuzaPGVH1BRMp6v22hAPkclkK.jpg\"},{\"cast_id\":24,\"character\":\"Claudia\",\"credit_id\":\"52fe4247c3a36847f8011e91\",\"id\":20387,\"name\":\"Clea DuVall\",\"order\":9,\"profile_path\":\"/hfdAP90y3oqLVp4r8wTEHLAW6Y5.jpg\"},{\"cast_id\":25,\"character\":\"Gina\",\"credit_id\":\"52fe4247c3a36847f8011e95\",\"id\":1276049,\"name\":\"Teresa Delgado\",\"order\":10,\"profile_path\":null},{\"cast_id\":26,\"character\":\"Dr. Rothberg\",\"credit_id\":\"52fe4247c3a36847f8011e99\",\"id\":81681,\"name\":\"Denis O'Hare\",\"order\":11,\"profile_path\":\"/rGHuNlTz5qQUTc0xzNic8aFgyGG.jpg\"}],\"directors\":[{\"credit_id\":\"52fe4247c3a36847f8011e1b\",\"department\":\"Directing\",\"id\":223,\"job\":\"Director\",\"name\":\"Alejandro González Iñárritu\",\"profile_path\":\"/qh6Bom66huviIJ2HheE29kI7y96.jpg\"}],\"genres\":[{\"id\":80,\"name\":\"Crime\"},{\"id\":18,\"name\":\"Drama\"},{\"id\":53,\"name\":\"Thriller\"}],\"homepage\":\"http://www.21-grams.com/index.php\",\"id\":470,\"imdb_id\":\"tt0315733\",\"original_language\":\"en\",\"original_title\":\"21 Grams\",\"overview\":\"This is the story of three gentle persons: Paul Rivers an ailing mathematician lovelessly married to an English émigré, Christina Peck, an upper-middle-class suburban housewife, happily married and mother of two little girls, and Jack Jordan, an ex-convict who has found in his Christian faith the strength to raise a family. They will be brought together by a terrible accident that will change their lives. By the final frame, none of them will be the same as they will learn harsh truths about love, faith, courage, desire and guilt, and how chance can change our worlds irretrievably, forever.\",\"popularity\":0.957140817048579,\"poster_path\":\"/jOmnwKmy4fF6rQPET62XHfCLFMr.jpg\",\"production_companies\":[{\"id\":10059,\"name\":\"This Is That Productions\"},{\"id\":10887,\"name\":\"Y Productions\"},{\"id\":10888,\"name\":\"Mediana Productions Filmgesellschaft\"}],\"production_countries\":[{\"iso_3166_1\":\"US\",\"name\":\"United States of America\"}],\"release_date\":\"2003-11-21\",\"revenue\":60427839,\"runtime\":124,\"spoken_languages\":[{\"iso_639_1\":\"en\",\"name\":\"English\"}],\"status\":\"Released\",\"tagline\":\"How much does life weigh?\",\"title\":\"21 Grams\",\"video\":false,\"vote_average\":6.9,\"vote_count\":235}\n",
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_bulk",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "query search",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"star trek patrick stewart\",\n            \"fields\": [\n                \"title\",\n\t\t\t\t\"overview^0.1\",\n\t\t\t\t\"cast.name.bigrammed^5\",\n\t\t\t\t\"directors.name\"\n            ],\n            \"type\": \"best_fields\",\n            \"tie_breaker\": 0.4\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "explain query",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"basketball with cartoon aliens\",\n            \"fields\": [\n                \"title^0.1\",\n                \"overview\"\n            ]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_validate/query?explain",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_validate",
+								"query"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get specific document, _id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_doc/2300",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_doc",
+								"2300"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "builtin analyzer",
+			"item": [
+				{
+					"name": "standard",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"standard\",\n  \"text\":      \"Is this#déja vu?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "analyzer",
+									"value": "standard",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The standard analyzer divides text into terms on word boundaries, as defined by the Unicode Text Segmentation algorithm. It removes most punctuation, lowercases terms, and supports removing stop words.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "simple",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"simple\",\n  \"text\":      \"Is this#déja vu?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "analyzer",
+									"value": "standard",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The simple analyzer divides text into terms whenever it encounters a character which is not a letter. It lowercases all terms.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "whitespace",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"whitespace\",\n  \"text\":      \"Is this#déja vu?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "analyzer",
+									"value": "standard",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The whitespace analyzer divides text into terms whenever it encounters any whitespace character. It does not lowercase terms.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "stop",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"stop\",\n  \"text\":      \"Is the this#déja vu?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "analyzer",
+									"value": "standard",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The stop analyzer is like the simple analyzer, but also supports removal of stop words.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "keyword",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"keyword\",\n  \"text\":      \"Is the this#déja vu?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "analyzer",
+									"value": "standard",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The keyword analyzer is a “noop” analyzer that accepts whatever text it is given and outputs the exact same text as a single term.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "pattern",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"pattern\",\n  \"text\":      \"Is the this#déja vu?\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "pattern",
+									"value": "\"\\W+\"",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The pattern analyzer uses a regular expression to split the text into terms. It supports lower-casing and stop words.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "language",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"analyzer\": \"english\",\n    \"text\": \"Michael Jordan agrees to help the Looney Tunes play a basketball game against alien slavers to determine their freedom.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "pattern",
+									"value": "\"\\W+\"",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Elasticsearch provides many language-specific analyzers like english or french\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				},
+				{
+					"name": "fingerprint",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"fingerprint\",\n  \"text\":      \"air & udara & water\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"_analyze"
+							],
+							"query": [
+								{
+									"key": "pattern",
+									"value": "\"\\W+\"",
+									"disabled": true
+								},
+								{
+									"key": "data",
+									"value": "Fire with Fire",
+									"disabled": true
+								}
+							]
+						},
+						"description": "The fingerprint analyzer is a specialist analyzer which creates a fingerprint which can be used for duplicate detection.\n\ndocs: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-analyzers.html"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "custom analyzer",
+			"item": [
+				{
+					"name": "custom analyzer",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"settings\": {\n        \"analysis\": {\n            \"analyzer\": {\n                \"my_custom_analyzer\": {\n                    \"type\": \"custom\",\n                    \"tokenizer\": \"standard\",\n                    \"char_filter\": [\n                        \"html_strip\"\n                    ],\n                    \"filter\": [\n                        \"lowercase\",\n                        \"asciifolding\"\n                    ]\n                }\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/custom_index",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"custom_index"
+							]
+						},
+						"description": "builtin tokenizer\nhttps://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-tokenizers.html\n\nbuiltin char_filter\nhttps://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-charfilters.html\n\nbuiltin token_filter\nhttps://www.elastic.co/guide/en/elasticsearch/reference/7.17/analysis-tokenfilters.html"
+					},
+					"response": []
+				},
+				{
+					"name": "check custom analyzer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"analyzer\": \"english_bigrams\",\n  \"text\": \"patrick stewart\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_analyze",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_analyze"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mapping",
+			"item": [
+				{
+					"name": "check index mapping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_mapping",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_mapping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "explicit mapping",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"mappings\": {\n        \"dynamic\": false,\n        \"properties\": {\n            \"title\": {\n                \"type\": \"text\"\n            },\n            \"overview\": {\n                \"type\": \"text\"\n            },\n            \"production_countries\": {\n                \"dynamic\": true,\n                \"properties\": {\n                    \"iso_3166_1\": {\n                        \"type\": \"text\"\n                    }\n                }\n            }\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "combine index mapping",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"settings\": {\n        \"analysis\": {\n            \"analyzer\": {\n                \"default\": {\n                    \"type\": \"english\"\n                },\n                \"english_bigrams\": {\n                    \"type\": \"custom\",\n                    \"tokenizer\": \"standard\",\n                    \"filter\": [\n                        \"lowercase\",\n                        \"porter_stem\",\n                        \"bigram_filter\"\n                    ]\n                }\n            },\n            \"filter\": {\n                \"bigram_filter\": {\n                    \"type\": \"shingle\",\n                    \"max_shingle_size\": 2,\n                    \"min_shingle_size\": 2,\n                    \"output_unigrams\": \"false\"\n                }\n            }\n        }\n    },\n    \"mappings\": {\n        \"dynamic\": true,\n        \"properties\": {\n            \"cast\": {\n                \"properties\": {\n                    \"name\": {\n                        \"copy_to\": \"people\",\n                        \"type\": \"text\",\n                        \"analyzer\": \"default\",\n                        \"fields\": {\n                            \"bigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_bigrams\"\n                            }\n                        }\n                    }\n                }\n            },\n            \"directors\": {\n                \"properties\": {\n                    \"name\": {\n                        \"copy_to\": \"people\",\n                        \"type\": \"text\",\n                        \"analyzer\": \"default\",\n                        \"fields\": {\n                            \"bigrammed\": {\n                                \"type\": \"text\",\n                                \"analyzer\": \"english_bigrams\"\n                            }\n                        }\n                    }\n                }\n            },\n            \"people\": {\n                \"type\": \"text\",\n                \"analyzer\":\"default\",\n                \"fields\": {\n                    \"bigrammed\": {\n                        \"type\": \"text\",\n                        \"analyzer\": \"english_bigrams\"\n                    }\n                }\n            }\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "term/field centric",
+			"item": [
+				{
+					"name": "best field",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"Star Trek Patrick Stewart William Shatner\",\n            \"fields\": [\n                \"people\",\n                \"people.bigrammed\"\n            ],\n            \"type\": \"best_fields\",\n            \"tie_breaker\": 0.2\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "best field explain",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"Star Trek Patrick Stewart William Shatner\",\n            \"fields\": [\n                \"people\",\n                \"people.bigrammed\"\n            ],\n            \"type\": \"best_fields\",\n            \"tie_breaker\": 0.2\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_validate/query?explain",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_validate",
+								"query"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "most field",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"patrick steward\",\n            \"fields\": [\n                \"title\",\n                \"overview\",\n                \"cast.name\",\n                \"directors.name\"\n            ],\n            \"type\": \"most_fields\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "most field explain",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"basketball with cartoon aliens\",\n            \"fields\": [\n                \"title^0.1\",\n                \"overview\"\n            ],\n            \"type\": \"most_fields\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_validate/query?explain",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_validate",
+								"query"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all field",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"patrick steward\",\n            \"fields\": [\n                \"_all\"\n            ]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all field explain",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"patrick steward\",\n            \"fields\": [\n                \"title\",\n                \"overview\",\n                \"cast.name\",\n                \"directors.name\"\n            ],\n            \"type\": \"most_fields\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "term-centric",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"multi_match\": {\n            \"query\": \"Star Trek Patrick Stewart William Shatner\",\n            \"fields\": [\n                \"title\",\n                \"overview^0.1\",\n                \"cast.name.bigrammed\",\n                \"directors.name.bigrammed\"\n            ],\n            \"type\": \"cross_fields\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "term-centric explain",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"query_string\": {\n            \"query\": \"Star Trek Patrick Stewart William Shatner\",\n            \"fields\": [\n                \"title\",\n                // \"overview^0.1\"\n                \"cast.name.bigrammed\"\n                // \"directors.name.bigrammed\"\n            ],\n            \"type\": \"cross_fields\"\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_validate/query?explain",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_validate",
+								"query"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "should query",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"explain\": true,\n    \"query\": {\n        \"bool\": {\n            \"should\": [\n                {\n                    \"multi_match\": {\n                        \"query\": \"Star Trek Patrick Stewart William Shatner\",\n                        \"fields\": [\n                            \"title\",\n                            \"overview^0.1\",\n                            \"cast.name.bigrammed\",\n                            \"directors.name.bigrammed\"\n                        ],\n                        \"type\": \"cross_fields\"\n                    }\n                },\n                {\n                    \"multi_match\": {\n                        \"query\": \"Star Trek Patrick Stewart William Shatner\",\n                        \"fields\": [\n                            \"cast.name.bigrammed\",\n                            \"directors.name.bigrammed\"\n                        ],\n                        \"type\": \"cross_fields\"\n                    }\n                }\n            ]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "should query explain",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"query\": {\n        \"bool\": {\n            \"should\": [\n                {\n                    \"multi_match\": {\n                        \"query\": \"Star Trek Patrick Stewart William Shatner\",\n                        \"fields\": [\n                            \"title\",\n                            \"overview^0.1\"\n                            // \"cast.name.bigrammed\",\n                            // \"directors.name.bigrammed\"\n                        ],\n                        \"type\": \"cross_fields\"\n                    }\n                },\n                {\n                    \"multi_match\": {\n                        \"query\": \"Star Trek Patrick Stewart William Shatner\",\n                        \"fields\": [\n                            \"cast.name.bigrammed\"\n                            // \"directors.name.bigrammed\"\n                        ],\n                        \"type\": \"cross_fields\"\n                    }\n                }\n            ]\n        }\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9200/tmdb/_validate/query?explain",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9200",
+							"path": [
+								"tmdb",
+								"_validate",
+								"query"
+							],
+							"query": [
+								{
+									"key": "explain",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "create index with analyzer",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"settings\": {\n        \"number_of_shards\": 1,\n        \"index\": {\n            \"analysis\": {}\n        }\n    },\n    \"mappings\": {\n        \"properties\": {\n            \"title\": {\n                \"type\": \"text\",\n                \"analyzer\": \"english\"\n            },\n            \"overview\": {\n                \"type\": \"text\",\n                \"analyzer\": \"english\"\n            }\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9200/tmdb",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"tmdb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "non index analyzer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tokenizer\": \"standard\",\n  \"filter\":  [ \"lowercase\", \"asciifolding\" ],\n  \"text\":      \"Is this déja vu?\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9200/_analyze",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"_analyze"
+					],
+					"query": [
+						{
+							"key": "analyzer",
+							"value": "standard",
+							"disabled": true
+						},
+						{
+							"key": "data",
+							"value": "Fire with Fire",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "index analyzer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"tokenizer\": \"standard\",\n  \"filter\":  [ \"lowercase\", \"asciifolding\" ],\n  \"text\":      \"Is this déja vu?\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9200/tmdb/_analyze",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9200",
+					"path": [
+						"tmdb",
+						"_analyze"
+					],
+					"query": [
+						{
+							"key": "analyzer",
+							"value": "standard",
+							"disabled": true
+						},
+						{
+							"key": "data",
+							"value": "Fire with Fire",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
